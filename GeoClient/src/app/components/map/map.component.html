@@ -1,0 +1,145 @@
+<div id="map"></div>
+
+
+<div class="map-buttons">
+    <button id="standard" class="map-btn">Standard</button>
+    <button id="satellite-streets" class="map-btn">Satellite Streets</button>
+    <button id="outdoors" class="map-btn">Outdoors</button>
+    <button id="light" class="map-btn">Light</button>
+    <button id="dark" class="map-btn">Dark</button>
+    <button id="osm" class="map-btn">OSM</button>
+</div>
+
+<div id="sidebar" [class.closed]="isSidebarClosed">
+  <button id="sidebar-toggle" (click)="toggleSidebar()">☰</button>
+  <div *ngFor="let layer of wmsLayers">
+    <input type="checkbox" [id]="layer.id" [checked]="layer.visible" (change)="toggleLayer(layer)">
+    <label [for]="layer.id">{{ layer.name }}</label>
+    <div *ngIf="layer.visible">
+      <img [src]="layer.legendUrl" alt="{{ layer.name }} legend">
+    </div>
+  </div>
+</div>
+
+<div class="charts">
+  <div class="table-container">
+    <div class="table-header">Hesaplamada Kullanılan Parametre Değerleri</div>
+    <table>
+      <tr>
+        <td>Fay Hatlarına Mesafe (metre) <i class="fa-solid fa-circle-info info-btn" id="distanceToFaultBtn"></i> 
+          <i class="fas fa-pen"></i></td>
+        <td id="distanceToFaultValue" contenteditable="false"></td>
+        
+        <td>Eğim Derecesi <i class="fa-solid fa-circle-info info-btn" id="slopeDegreeBtn"></i> 
+          <i class="fas fa-pen"></i></td>
+        <td id="slopeDegreeValue"></td>
+      </tr>
+      <tr>
+        <td>Zemin Sınıfı <i class="fa-solid fa-circle-info info-btn" id="soilClassBtn"></i></td>
+        <td id="soilClassValue"></td>
+        <td>Yükseklik Değeri (metre)  <i class="fa-solid fa-circle-info info-btn" id="elevationBtn"></i><i class="fas fa-pen"></i></td>
+        <td id="elevationValue"></td>
+      </tr>
+      <tr>
+        <td>Toprak Tipi <i class="fa-solid fa-circle-info info-btn" id="soilTypeBtn"></i></td>
+        <td id="soilTypeValue"></td>
+        <td>Yağış Miktarı <i class="fa-solid fa-circle-info info-btn" id="rainfallBtn"></i></td>
+        <td id="rainfallValue"></td>
+      </tr>
+      <tr>
+        <td>Sulak Alanlara Mesafe (metre)  <i class="fa-solid fa-circle-info info-btn" id="distanceToWetlandsBtn"></i> <i class="fas fa-pen"></i> </td>
+        <td id="distanceToWetlandsValue"></td>
+        <td>Bitki Örtüsü <i class="fa-solid fa-circle-info info-btn" id="vegetationCoverBtn"></i></td>
+        <td id="vegetationCoverValue"></td>
+      </tr>
+      <tr>
+        <td>Litoloji <i class="fa-solid fa-circle-info info-btn" id="litolojiBtn"></i></td>
+        <td id="litolojiValue"></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <div class="chart" id="earthquakeRiskChart">
+    
+    <canvas id="earthquakeRiskCanvas"></canvas>
+  </div>
+  <div class="chart" id="floodRiskChart">
+    <canvas id="floodRiskCanvas"></canvas>
+  </div>
+  <div class="chart" id="landslideRiskChart">
+    <canvas id="landslideRiskCanvas"></canvas>
+  </div>
+</div>
+
+
+
+
+
+<div id="distanceToFaultPopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometrinin orta noktası ile en yakın fay hattı arasındaki uzaklık değeridir.</p>
+  </div>
+</div>
+
+
+<div id="slopeDegreePopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometrinin ortalama eğim derecesi değeridir. </p>
+  </div>
+</div>
+
+<div id="soilClassPopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometri kapsamındaki zemin sınıfı değeridir.</p>
+  </div>
+</div>
+
+>
+<div id="elevationPopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometrinin ortalama yükseklik değeridir</p>
+  </div>
+</div>
+
+
+<div id="soilTypePopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometri kapsamındaki toprak sınıfı değeridir.</p>
+  </div>
+</div>
+
+
+<div id="rainfallPopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometri kapsamındaki ortalama yağış miktarı değeridir.</p>
+  </div>
+</div>
+
+
+<div id="distanceToWetlandsPopup" class="info-popup hidden">
+  <div>
+     
+    <p>Çizilen geometrinin orta noktası ile en yakın sulak alan arasındaki uzaklık değeridir</p>
+  </div>
+</div>
+
+<div id="vegetationCoverPopup" class="info-popup hidden">
+  <div>
+     
+    <p>Çizilen geometri kapsamındaki bitki örtüsü sınıfıdır.</p>
+  </div>
+</div>
+
+<div id="litolojiPopup" class="info-popup hidden">
+  <div >
+     
+    <p>Çizilen geometri kapsamındaki litoloji sınıfıdır.</p>
+  </div>
+</div>

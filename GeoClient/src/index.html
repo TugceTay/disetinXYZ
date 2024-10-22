@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GeoClient</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <div class="right-buttons">
+    <button class="icon-button" id="drawPolygonBtn">
+      <i class="fa-solid fa-draw-polygon fa-beat-fade"></i>
+    </button>
+    <button class="icon-button" id="questionBtn">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <button class="icon-button" id="bookBtn">
+      <i class="fa-solid fa-book-medical"></i>
+    </button>
+  </div>
+  <div id="popup" class="popup hidden">
+    <div class="popup-content">
+      <span class="close-btn" id="closePopup">&times;</span>
+      <p>Popup içeriği buraya gelecek.</p>
+    </div>
+  </div>
+
+
+
+ <div id="questionPopup" class="popup hidden">
+  <div class="popup-content">
+    <span class="close-btn" id="closeQuestionPopup">&times;</span>
+    <div class="tabs">
+      <button class="tablinks" onclick="openTab(event, 'KullanimKilavuzu')">Kullanım Kılavuzu</button>
+      <button class="tablinks" onclick="openTab(event, 'VeriKaynaklari')">Veri Kaynakları</button>
+    </div>
+    <div id="KullanimKilavuzu" class="tabcontent">
+      <video width="320" height="240" controls>
+        <source src="kullanim_kilavuzu.mp4" type="video/mp4">
+        Tarayıcınız video etiketini desteklemiyor.
+      </video>
+    </div>
+    <div id="VeriKaynaklari" class="tabcontent">
+      <h3>Veri Kaynakları</h3>
+      <ul>
+        <li><strong>Yükseklik verisi:</strong> ALOS PALSAR (Phased Array type L-band Synthetic Aperture Radar)</li>
+        <li><strong>Eğim verisi:</strong> ALOS PALSAR (Phased Array type L-band Synthetic Aperture Radar)</li>
+        <li><strong>Sulak alanlar verisi:</strong> OpenStreetMap Overpass API (<a href="https://overpass-api.de/api/" target="_blank">https://overpass-api.de/api/</a>)</li>
+        <li><strong>Fay hatları verisi:</strong>Maden Tetkik ve Arama Genel Müdürlüğü (<a href="https://www.mta.gov.tr/" target="_blank">https://www.mta.gov.tr/</a>) </li>
+        <li><strong>Çölleşme Hassasiyeti, Toprağın Erozyona Duyarlılığı, Su Erozyonu:</strong> Ulusal Coğrafi̇ Açik Veri̇ Platformu (<a href="https://tucbskontrol.csb.gov.tr/TUCBSAcikVeri" target="_blank">https://tucbskontrol.csb.gov.tr/TUCBSAcikVeri</a>)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div id="bookPopup" class="popup hidden">
+  <div class="popup-content">
+    <span class="close-btn" id="closebookPopup">&times;</span>
+    <div class="tabs">
+      <button class="tablinks" onclick="openTab(event, 'AlinabilecekTedbirler')">Alınabilecek Tedbirler</button>
+      <button class="tablinks" onclick="openTab(event, 'IlkYardimRehberi')">İlk Yardım Rehberi</button>
+      <button class="tablinks" onclick="openTab(event, 'YararliKaynaklar')">Yararlı Kaynaklar</button>
+    </div>
+    <div id="AlinabilecekTedbirler" class="tabcontent">
+      <h3>Deprem Öncesi Alınabilecek Tedbirler</h3>
+      <ul>
+        <li><strong>Deprem Yönetmeliklerine Uygun Yapılaşma</strong> 
+          <p>Bu yönetmelikler, binaların deprem güvenliğini sağlamak amacıyla belirli standartlar ve kriterler ortaya koyar. Özellikle yapıların taşıyıcı sistemlerinin güçlendirilmesi, bina yüksekliği, yapı malzemeleri ve zemin etüdü gibi teknik ayrıntılar yönetmelikte yer alır. Depreme dayanıklı yapı tasarımı ve inşası için, yapının bulunduğu deprem bölgesi ve zemin özelliklerine göre minimum koşullar sunulur.</p>
+        </li>
+        <li><strong>Kentsel Dönüşüm ve Güçlendirme</strong> 
+          <p>Kentsel dönüşüm projeleri, özellikle eski binaların yıkılarak yerlerine yeni, deprem yönetmeliğine uygun binaların inşa edilmesini kapsar. Bu projelerde, riskli yapılar için güçlendirme çalışmaları da yapılabilir. Mevcut binaların güçlendirilmesi için çeşitli teknikler kullanılabilir. Bunlar arasında betonarme perde duvarlar ekleme, kolon ve kirişleri sarma veya karbon elyafla güçlendirme gibi yöntemler bulunur.</p>
+        </li>
+        <li><strong>Erken Uyarı Sistemleri</strong> 
+          <p>Belirli bölgelerde kurulan deprem erken uyarı sistemleri ile depremler saniyeler öncesinden tespit edebilir. Bu sistemler, özellikle büyük şehirlerde kritik altyapının (örneğin doğalgaz kesintisi) devreye sokulması için kullanılır.</p>
+        </li>
+      </ul>
+      <h3>Sel Öncesi Alınabilecek Tedbirler</h3>
+      <ul>
+        <li><strong>Baraj ve Taşkın Koruma Yapıları</strong> 
+          <p>Ülkemizde taşkın koruma amacıyla birçok baraj ve set inşa edilmiştir. Bu yapılar, özellikle taşkın riski yüksek bölgelerde suyun kontrol altında tutulmasını sağlar.</p>
+        </li>
+        <li><strong>Dere Yataklarının Islahı</strong> 
+          <p>Dere yataklarının genişletilmesi ve ıslahı, sel sularının akışını kontrol altına alarak suyun çevreye zarar vermesini engeller. Bu çalışmalar, suyun daha geniş bir alanda yayılmasını ve hızlı akışını önleyerek, taşkınların yerleşim yerlerine ve tarım arazilerine verebileceği zararları minimize eder.</p>
+        </li>
+        <li><strong>Yağmur Suyu Drenaj Sistemleri</strong> 
+          <p>Bu sistemler, yağmur suyunun hızla toplanıp güvenli bir şekilde tahliye edilmesini sağlayarak, cadde ve sokaklarda birikmesini engeller.</p>
+        </li>
+      </ul>
+      <h3>Heyelan Öncesi Alınabilecek Tedbirler</h3>
+      <ul>
+        <li><strong>Eğimli Arazilerde Yapılaşma Kısıtlamaları</strong> 
+          <p>Türkiye’de, eğimli arazilerde yapılaşma için detaylı zemin etüdü ve jeoteknik raporlar zorunludur. Bu raporlar, zeminin stabilitesi, drenaj durumu ve heyelan potansiyeli gibi kritik unsurları analiz eder. Belediyeler, bu raporlar doğrultusunda eğimli alanlarda yapılaşmaya izin verir veya kısıtlama getirir.</p>
+        </li>
+        <li><strong>Bitki Örtüsünün Korunması</strong> 
+          <p>Özellikle heyelan riski taşıyan eğimli arazilerde yapılan ağaçlandırma çalışmaları, toprağın doğal stabilitesini artırır. Ağaç kökleri, toprağı sıkıca tutarak yağmur sularının zemini aşındırmasını ve kaymalara yol açmasını engeller. Ağaçlandırma, toprağın su emme kapasitesini artırarak heyelan riskini ciddi ölçüde azaltır.</p>
+        </li>
+      </ul>
+    </div>
+   
+    <div id="IlkYardimRehberi" class="tabcontent">
+      <h3>İlk Yardım Rehberi</h3>
+      <ul style="font-size: 1.1em;">
+        <li><strong>1. Ezilme Yaralanmaları (Crush Sendromu)</strong>
+          <p>Belirti: Ezilmiş vücut parçaları, özellikle bacaklar ve kollar.</p>
+          <p><strong>Bilinci açık tutun:</strong> Yaralıyı rahat bir pozisyona alın ve mümkünse ezilen bölgeyi serbest bırakın. Ancak bu, uzun süre ezilmişse profesyonel yardım gelmeden önce yapılmamalıdır.</p>
+          <p><strong>Soğuk uygulayın:</strong> Ezilen bölgeye buz torbası veya soğuk kompres uygulayın.</p>
+          <p><strong>Sıkı bandaj:</strong> Yaralanan bölgeyi mümkün olduğunca yukarıda tutarak bandaj uygulayın ve tıbbi yardım çağırın.</p>
+        </li>
+        <br>
+        <li><strong>2. Kanamalar</strong>
+          <p>Aşırı kanamalarda basınç uygulayın, mümkünse temiz bir bezle kanayan bölgeye baskı yapın.</p>
+          <p><strong>Kol veya bacakta kanama:</strong> Kanayan bölgeyi kalp seviyesinin üzerine kaldırın.</p>
+          <p><strong>Turnike:</strong> Sadece hayatı tehdit eden kanamalarda ve profesyonel yardımın uzun süre gelmeyeceği durumlarda kullanılmalıdır.</p>
+        </li>
+        <br>
+        <li><strong>3. Kırıklar ve Çıkıklar</strong>
+          <p>Belirti: Şiddetli ağrı, şişme, anormal pozisyon.</p>
+          <p><strong>Hareket ettirmeyin:</strong> Kırık şüphesi olan bölgeyi hareket ettirmemeye çalışın.</p>
+          <p><strong>Sabit duruma getirin:</strong> Bölgeyi sabitlemek için atel veya benzeri bir malzeme kullanın ve tıbbi yardım çağırın.</p>
+        </li>
+        <br>
+        <li><strong>4. Şok Hali</strong>
+          <p>Şok belirtileri olan (soğuk terleme, hızla atan nabız, bilinç kaybı) kişiyi düz bir zemine yatırın, bacaklarını kaldırın.</p>
+          <p><strong>Yaralıyı sıcak tutun:</strong> Hareket ettirmeyin. Bilinç kaybı varsa, yan yatırma pozisyonuna getirin.</p>
+        </li>
+        <br>
+        <li><strong>5. Solunum Problemleri ve Boğulma</strong>
+          <p><strong>Boğulma:</strong> Bilinç kaybı yaşayan birini suyun dışına çıkardıktan sonra sırtüstü yatırın ve başını yana çevirerek hava yolunun açık olduğundan emin olun.</p>
+          <p><strong>CPR uygulayın:</strong> Nefes almıyorsa, CPR (kardiyopulmoner resüsitasyon) başlatın ve acil tıbbi yardım çağırın.</p>
+        </li>
+        <br>
+        <li><strong>6. Hipotermi (Vücut Isısının Düşmesi)</strong>
+          <p>Belirti: Titreme, uyuşukluk, yavaş nefes alma.</p>
+          <p><strong>Isı kaynağına alın:</strong> Kişiyi kuru ve sıcak bir yere taşıyın.</p>
+          <p><strong>Vücut sıcaklığını artırın:</strong> Kuru giysilerle örtün ve sıcak bir battaniye ile sarın.</p>
+          <p><strong>Sıcak içecekler:</strong> Bilinci yerinde ise sıcak (ancak aşırı sıcak olmayan) içecekler verin.</p>
+        </li>
+        <br>
+        <li><strong>7. Elektrik Çarpması</strong>
+          <p><strong>Elektrik kaynağından uzaklaştırın:</strong> Elektrik akımına maruz kalan kişiye dokunmadan önce, güç kaynağını kesmeye çalışın. Elektrik çarpması yaşanan kişiyi güvenli bir şekilde kaynaktan uzaklaştırın (lastik eldiven veya ahşap gibi yalıtkan materyaller kullanın).</p>
+          <p><strong>CPR uygulayın:</strong> Nefes almıyorsa, CPR başlatın.</p>
+        </li>
+        <br>
+        <li><strong>8. Kafa Travmaları</strong>
+          <p>Belirti: Bilinç kaybı, baş ağrısı, mide bulantısı.</p>
+          <p><strong>Hareket ettirmeyin:</strong> Kafa travması şüphesi olan kişiyi hareket ettirmeyin.</p>
+          <p><strong>Baş ve boynu sabitleyin:</strong> Baş ve boynun sabit kalmasını sağlayın ve acil tıbbi yardım çağırın.</p>
+        </li>
+      </ul>
+    </div>
+
+    <div id="YararliKaynaklar" class="tabcontent">
+      <h3>Yararlı Kaynaklar</h3>
+      <ul>
+        
+        <li><a href="https://www.mta.gov.tr" target="_blank">Maden Tetkik ve Arama Genel Müdürlüğü (MTA)</a></li>
+        <li><a href="http://www.koeri.boun.edu.tr/" target="_blank">Boğaziçi Üniversitesi Kandilli Rasathanesi</a></li>
+        <li><a href="https://www.afad.gov.tr/" target="_blank">Afet ve Acil Durum Yönetimi Başkanlığı (AFAD)</a></li>
+        <li><a href="https://www.tusaga-aktif.gov.tr/Web/DepremVerileri.aspx" target="_blank">TUSAGA Aktif</a></li>
+        <li><a href="https://earthquake.usgs.gov/earthquakes/map/?extent=33.30299,23.73047&extent=43.90581,48.33984" target="_blank">USGS</a></li>
+        <li><a href="https://atlas.gov.tr" target="_blank">CBS Genel Müdürlüğü ATLAS</a></li>
+        <li><a href="https://dergipark.org.tr/tr/pub/tdad/issue/50697/600455" target="_blank">Türk Deprem Araştırma Dergisi</a></li>
+        <li><a href="https://www.tdmd.org.tr/Eklenti/24,54-tbdy2018pdf.pdf?0" target="_blank">2018 Deprem Yönetmeliği</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <div class="footer-line">
+    <div class="left-content">
+      <span class="footer-text">disetin.xyz</span>
+    </div>
+    <div class="right-content">
+      <span class="header-title">Disaster Oriented Settlement Planning: Interactive Web Application</span>
+    </div>
+  </div>
+  <app-root></app-root>
+  <div class="footer-line bottom-line"></div>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script>
+    function toggleLegend(legendId) {
+      var legend = document.getElementById(legendId);
+      var button = event.target.closest('.toggle-legend');
+      if (legend.style.display === "none" || legend.style.display === "") {
+        legend.style.display = "block";
+        button.setAttribute('aria-expanded', 'true');
+      } else {
+        legend.style.display = "none";
+        button.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const questionBtn = document.getElementById('questionBtn');
+    const bookBtn = document.getElementById('bookBtn');
+  });
+
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  document.getElementsByClassName('tablinks')[0].click();
+
+  questionBtn.addEventListener('click', function() {
+    questionPopup.classList.remove('hidden');
+    questionPopup.style.display = 'block';
+    document.getElementsByClassName('tablinks')[0].click();
+  });
+
+  closeQuestionPopup.addEventListener('click', function() {
+    questionPopup.classList.add('hidden');
+    questionPopup.style.display = 'none';
+  });
+
+  bookBtn.addEventListener('click', function() {
+    bookPopup.classList.remove('hidden');
+    bookPopup.style.display = 'block';
+    document.getElementsByClassName('tablinks')[0].click();
+    openTab(null, 'AlinabilecekTedbirler');
+  });
+
+  closebookPopup.addEventListener('click', function() {
+    bookPopup.classList.add('hidden');
+    bookPopup.style.display = 'none';
+  });
+
+  window.addEventListener('click', function(event) {
+    if (!questionPopup.contains(event.target) && !event.target.closest('.icon-button')) {
+      questionPopup.classList.add('hidden');
+      questionPopup.style.display = 'none';
+    }
+    if (!bookPopup.contains(event.target) && !event.target.closest('.icon-button')) {
+      bookPopup.classList.add('hidden');
+      bookPopup.style.display = 'none';
+    }
+  });
+
+
+  </script>
+</body>
+</html>
